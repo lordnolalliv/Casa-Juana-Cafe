@@ -102,6 +102,8 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
 .booking-contact div { display: grid; gap: 4px; }
 .booking-contact small { color: rgba(255,255,255,.65); font-size: 10px; }
 .booking-contact a { font: 500 17px "Playfair Display", Georgia, serif; }
+.booking-facebook { display: inline-flex; gap: 8px; align-items: center; margin: 15px 0 0 52px; color: #f0c4a8; font-size: 11px; font-weight: 600; }
+.booking-facebook span { font-size: 15px; }
 .booking-copy .booking-hours { color: rgba(255,255,255,.55); font-size: 10px; line-height: 1.8; margin-top: 18px; }
 .booking-form { padding: 32px 35px 27px; background: var(--paper); color: var(--ink); box-shadow: 0 13px 44px rgba(0,0,0,.14); }
 .form-heading { display: flex; justify-content: space-between; padding-bottom: 19px; margin-bottom: 18px; border-bottom: 1px solid var(--line); color: var(--green); font-size: 9px; font-weight: 700; letter-spacing: 1.4px; }
@@ -114,6 +116,8 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
 .form-row > div { min-width: 0; }
 .optional { color: #999e95; font-weight: 400; }
+.field-hint { display: block; margin-top: 6px; color: #858b82; font-size: 9px; }
+.booking-form select#booking-occasion { margin-bottom: 1px; }
 .submit-button { width: 100%; margin-top: 18px; justify-content: space-between; min-height: 48px; }
 .form-disclaimer { margin: 11px 0 0; color: #8a8e84; font-size: 9px; line-height: 1.6; }
 .form-message { margin: 9px 0 0; color: var(--green); font-size: 10px; }
@@ -125,6 +129,8 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
 .visit-hours { display: grid; gap: 7px; border-left: 1px solid var(--line); padding-left: 27px; font-size: 11px; color: #536157; }
 .visit-hours b { color: var(--orange); font-size: 9px; letter-spacing: 1.4px; margin-bottom: 4px; }
 .visit-hours small { color: #92958b; font-size: 10px; }
+.visit-map { grid-column: 1 / -1; height: 260px; overflow: hidden; background: #e8e5db; }
+.visit-map iframe { display: block; width: 100%; height: 100%; border: 0; }
 .site-footer { min-height: 84px; border-top: 1px solid var(--line); padding: 16px 7.2%; display: flex; justify-content: space-between; align-items: center; color: #778078; font-size: 10px; }
 .footer-brand { color: var(--ink); font-size: 16px; }
 .footer-brand img { width: 42px; height: 42px; }
@@ -159,6 +165,7 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
   .booking-form { padding: 28px 24px 24px; }
   .visit-section { grid-template-columns: 1fr 1fr; }
   .visit-hours { grid-column: 2; }
+  .visit-map { grid-column: 1 / -1; }
 }
 
 @media (max-width: 620px) {
@@ -205,6 +212,7 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
   .visit-section { grid-template-columns: 1fr; gap: 25px; padding-top: 66px; padding-bottom: 66px; }
   .visit-section h2 { font-size: 42px; }
   .visit-hours { grid-column: auto; border-left: 0; border-top: 1px solid var(--line); padding: 19px 0 0; }
+  .visit-map { height: 230px; }
   .site-footer { flex-wrap: wrap; gap: 16px; padding: 19px 6%; }
   .site-footer > span { order: 3; width: 100%; }
   .footer-brand { font-size: 14px; }

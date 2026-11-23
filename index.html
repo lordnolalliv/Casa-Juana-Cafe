@@ -6,10 +6,53 @@
   <meta name="theme-color" content="#f7f4ec">
   <meta name="description" content="Book a table, catering, or a private event at Casa Juana Cafe in Alburquerque, Bohol.">
   <title>Book a Table or Event | Casa Juana Cafe</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Casa Juana Cafe | Good food. Good company.">
+  <meta property="og:description" content="Filipino comfort food, catering, private events, pool days, and overnight stays in Alburquerque, Bohol.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/lordnolalliv/Casa-Juana-Cafe/main/casa-juana-logo.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Casa Juana Cafe | Good food. Good company.">
+  <meta name="twitter:description" content="Filipino comfort food, catering, private events, pool days, and overnight stays in Alburquerque, Bohol.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/lordnolalliv/Casa-Juana-Cafe/main/casa-juana-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "Casa Juana Cafe",
+      "image": "https://raw.githubusercontent.com/lordnolalliv/Casa-Juana-Cafe/main/casa-juana-logo.png",
+      "telephone": "+639603850662",
+      "servesCuisine": "Filipino",
+      "sameAs": [
+        "https://www.facebook.com/casajuanacafe",
+        "https://www.google.com/search?kgmid=%2Fg%2F11z3_6lg_r"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sitio Cambandao, Barangay Toril",
+        "addressLocality": "Alburquerque",
+        "addressRegion": "Bohol",
+        "postalCode": "6302",
+        "addressCountry": "PH"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "17:00"
+      }
+    }
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -114,6 +157,7 @@
             <span class="contact-symbol">✆</span>
             <div><small>Prefer to talk?</small><a href="tel:+639603850662">+63 960 385 0662</a></div>
           </div>
+          <a class="booking-facebook" href="https://www.facebook.com/casajuanacafe" target="_blank" rel="noopener noreferrer">Message us on Facebook <span>↗</span></a>
           <p class="booking-hours">Cafe hours: Monday–Saturday, 8:00 AM–5:00 PM<br>For event and overnight inquiries, message us anytime.</p>
         </div>
         <form class="booking-form" id="booking-form">
@@ -129,12 +173,25 @@
           </select>
           <div class="form-row">
             <div><label for="booking-date">Preferred date</label><input id="booking-date" name="date" type="date" required></div>
-            <div><label for="guest-count">Number of guests</label><select id="guest-count" name="guests" required><option value="" selected disabled>Select guests</option><option>1–2</option><option>3–5</option><option>6–10</option><option>11–20</option><option>21–50</option><option>51–100</option><option>More than 100</option></select></div>
+            <div><label for="booking-time">Preferred time</label><input id="booking-time" name="time" type="time" required></div>
           </div>
+          <label for="guest-count">Number of guests</label>
+          <select id="guest-count" name="guests" required><option value="" selected disabled>Select guests</option><option>1–2</option><option>3–5</option><option>6–10</option><option>11–20</option><option>21–50</option><option>51–100</option><option>More than 100</option></select>
+          <label for="booking-occasion">What's the occasion? <span class="optional">(optional)</span></label>
+          <select id="booking-occasion" name="occasion">
+            <option value="">Choose an occasion</option>
+            <option>Casual meal</option>
+            <option>Birthday</option>
+            <option>Wedding or christening</option>
+            <option>Family reunion</option>
+            <option>Office or community event</option>
+            <option>Other</option>
+          </select>
           <label for="customer-name">Your name</label>
           <input id="customer-name" name="name" type="text" placeholder="How should we address you?" autocomplete="name" required>
           <label for="customer-contact">Mobile number or email</label>
-          <input id="customer-contact" name="contact" type="text" placeholder="So we can get back to you" required>
+          <input id="customer-contact" name="contact" type="text" placeholder="So we can get back to you" aria-describedby="contact-hint" required>
+          <small class="field-hint" id="contact-hint">Enter a valid email address or phone number.</small>
           <label for="booking-notes">Anything else we should know? <span class="optional">(optional)</span></label>
           <textarea id="booking-notes" name="notes" rows="3" placeholder="Occasion, menu requests, preferred time..."></textarea>
           <button class="button button-dark submit-button" type="submit">Continue to WhatsApp <span>↗</span></button>
@@ -154,13 +211,22 @@
         <a class="arrow-link" href="https://www.google.com/maps/search/?api=1&query=Casa+Juana+Cafe+Sitio+Cambandao+Alburquerque+Bohol" target="_blank" rel="noreferrer">Get directions <span>↗</span></a>
       </div>
       <div class="visit-hours"><b>CAFE HOURS</b><span>Monday – Saturday</span><span>8:00 AM – 5:00 PM</span><small>Closed Sundays</small></div>
+      <div class="visit-map">
+        <iframe
+          title="Map to Casa Juana Cafe in Alburquerque, Bohol"
+          src="https://www.google.com/maps?q=Casa+Juana+Cafe+Sitio+Cambandao+Alburquerque+Bohol&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <a class="brand footer-brand" href="#home"><img src="casa-juana-logo.png" alt=""><span>Casa Juana <small>Cafe · Catering · Events</small></span></a>
     <span>Made for good food & good company.</span>
-    <a href="https://www.google.com/search?kgmid=%2Fg%2F11z3_6lg_r" target="_blank" rel="noreferrer">Find Casa Juana online ↗</a>
+    <a href="https://www.facebook.com/casajuanacafe" target="_blank" rel="noopener noreferrer">Find us on Facebook ↗</a>
   </footer>
   <script src="script.js"></script>
 </body>
