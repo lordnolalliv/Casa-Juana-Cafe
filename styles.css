@@ -118,6 +118,9 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
 .optional { color: #999e95; font-weight: 400; }
 .field-hint { display: block; margin-top: 6px; color: #858b82; font-size: 9px; }
 .booking-form select#booking-occasion { margin-bottom: 1px; }
+.honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.consent-row { display: flex !important; align-items: flex-start; gap: 9px; color: #6d756c; font-size: 9px !important; font-weight: 400 !important; line-height: 1.55; }
+.booking-form .consent-row input[type="checkbox"] { width: 15px; height: 15px; min-height: 15px; flex: 0 0 15px; margin: 1px 0 0; padding: 0; accent-color: var(--green); }
 .submit-button { width: 100%; margin-top: 18px; justify-content: space-between; min-height: 48px; }
 .form-disclaimer { margin: 11px 0 0; color: #8a8e84; font-size: 9px; line-height: 1.6; }
 .form-message { margin: 9px 0 0; color: var(--green); font-size: 10px; }

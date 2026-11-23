@@ -20,9 +20,21 @@ const bookingDate = document.querySelector("#booking-date");
 const bookingTime = document.querySelector("#booking-time");
 const bookingType = document.querySelector("#booking-type");
 const customerContact = document.querySelector("#customer-contact");
+const bookingForm = document.querySelector("#booking-form");
+const bookingMessage = document.querySelector("#form-message");
+const submitButton = bookingForm.querySelector('button[type="submit"]');
+const bookingDisclaimer = document.querySelector("#booking-disclaimer");
+const consentCopy = bookingForm.querySelector(".consent-row span");
+const BOOKING_ENDPOINT = "";
 const localToday = new Date();
 const dateOffset = localToday.getTimezoneOffset() * 60000;
 bookingDate.min = new Date(localToday.getTime() - dateOffset).toISOString().slice(0, 10);
+
+if (BOOKING_ENDPOINT) {
+  submitButton.firstChild.textContent = "Send booking request ";
+  consentCopy.textContent = "I agree Casa Juana may store my details in its private booking sheet and contact me about this request. My request is not confirmed until the cafe replies.";
+  bookingDisclaimer.textContent = "Your request is emailed to the cafe and stored in its private booking sheet. Rates vary by date, guest count, and package.";
+}
 
 function updateBookingConstraints() {
   const isCafeTable = bookingType.value === "Table reservation";
@@ -61,14 +73,27 @@ function validateContact() {
 
 customerContact.addEventListener("input", validateContact);
 
-document.querySelector("#booking-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
+bookingForm.addEventListener("submit", (event) => {
   updateBookingConstraints();
   validateContact();
-  if (!form.reportValidity()) return;
+  if (!bookingForm.reportValidity()) {
+    event.preventDefault();
+    return;
+  }
 
-  const booking = new FormData(form);
+  if (BOOKING_ENDPOINT) {
+    event.preventDefault();
+    bookingForm.action = BOOKING_ENDPOINT;
+    bookingForm.method = "post";
+    bookingForm.target = "_blank";
+    bookingMessage.textContent = "Sending your request securely. A receipt will open in a new tab.";
+    bookingForm.submit();
+    return;
+  }
+
+  event.preventDefault();
+
+  const booking = new FormData(bookingForm);
   const date = new Date(`${booking.get("date")}T12:00:00`);
   const formattedDate = new Intl.DateTimeFormat("en-PH", { dateStyle: "full" }).format(date);
   const message = [
@@ -86,5 +111,5 @@ document.querySelector("#booking-form").addEventListener("submit", (event) => {
 
   const whatsappUrl = `https://wa.me/639603850662?text=${encodeURIComponent(message)}`;
   window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  document.querySelector("#form-message").textContent = "Your booking details are ready in WhatsApp. Send the message to request confirmation.";
+  bookingMessage.textContent = "Your booking details are ready in WhatsApp. Send the message to request confirmation.";
 });

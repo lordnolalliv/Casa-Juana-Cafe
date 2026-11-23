@@ -194,8 +194,16 @@
           <small class="field-hint" id="contact-hint">Enter a valid email address or phone number.</small>
           <label for="booking-notes">Anything else we should know? <span class="optional">(optional)</span></label>
           <textarea id="booking-notes" name="notes" rows="3" placeholder="Occasion, menu requests, preferred time..."></textarea>
+          <div class="honeypot" aria-hidden="true">
+            <label for="website">Leave this field empty</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <label class="consent-row">
+            <input name="consent" type="checkbox" value="yes" required>
+            <span>I agree Casa Juana may use my details to respond to this request. My request is not confirmed until the cafe replies.</span>
+          </label>
           <button class="button button-dark submit-button" type="submit">Continue to WhatsApp <span>↗</span></button>
-          <p class="form-disclaimer">Your request isn't confirmed until our team replies. Rates vary by date, guest count, and package.</p>
+          <p class="form-disclaimer" id="booking-disclaimer">WhatsApp opens with your request details. They are sent only after you press Send in WhatsApp.</p>
           <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
         </form>
       </div>
