@@ -1,0 +1,211 @@
+:root {
+  --cream: #f7f4ec;
+  --paper: #fffdf8;
+  --ink: #263a31;
+  --green: #304c3e;
+  --orange: #d7784e;
+  --muted: #788078;
+  --line: #dedbd1;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: "DM Sans", sans-serif; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+
+.site-header { height: 84px; padding: 0 7.2%; display: flex; align-items: center; justify-content: space-between; background: var(--cream); position: relative; z-index: 3; }
+.brand { display: flex; align-items: center; gap: 11px; font: 700 20px "Playfair Display", Georgia, serif; }
+.brand img { width: 52px; height: 52px; object-fit: cover; border-radius: 50%; border: 1px solid #d5d0c4; }
+.brand span { display: grid; gap: 2px; }
+.brand small { font: 600 9px "DM Sans", sans-serif; text-transform: uppercase; letter-spacing: 1.65px; color: #788078; }
+.main-nav { display: flex; align-items: center; gap: 37px; font-size: 13px; font-weight: 600; }
+.main-nav > a:not(.nav-book):hover, .arrow-link:hover, .text-link:hover { color: var(--orange); }
+.nav-book { background: var(--green); color: white; padding: 14px 19px; border-radius: 3px; }
+.nav-book span { margin-left: 10px; }
+.menu-toggle { display: none; border: 0; background: none; color: var(--ink); font-size: 25px; }
+
+.hero { position: relative; min-height: 570px; height: min(660px, calc(100vh - 84px)); background: #39483d; overflow: hidden; color: white; }
+.hero-photo { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center 54%; filter: saturate(.8); }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20,35,29,.84) 0%, rgba(25,41,33,.62) 43%, rgba(26,38,31,.08) 100%), linear-gradient(0deg, rgba(17,29,25,.35), transparent 40%); }
+.hero-content { position: relative; width: min(1180px, 85%); height: 100%; margin: auto; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 20px 0 35px; }
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2.3px; margin: 0 0 22px; }
+.eyebrow span { display: inline-block; vertical-align: middle; width: 25px; height: 1px; background: var(--orange); margin-right: 8px; }
+h1, h2, h3, p { margin-top: 0; }
+.hero h1, .booking-copy h2 { font: 500 clamp(54px, 7vw, 91px)/.99 "Playfair Display", Georgia, serif; letter-spacing: -2px; margin: 0; }
+h1 em, h2 em { font-weight: 500; color: #d9a681; }
+.hero-copy { max-width: 430px; margin: 24px 0 27px; color: rgba(255,255,255,.82); font-size: 14px; line-height: 1.8; }
+.hero-links { display: flex; align-items: center; gap: 28px; }
+.button { display: inline-flex; min-height: 49px; justify-content: center; align-items: center; gap: 23px; border: 0; border-radius: 2px; padding: 0 20px; font-size: 12px; font-weight: 700; cursor: pointer; transition: transform .18s ease, background .18s ease; }
+.button:hover { transform: translateY(-2px); }
+.button-light { color: var(--ink); background: var(--cream); }
+.button-light span, .button-dark span { font-size: 16px; }
+.text-link { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.9); }
+.text-link span { padding-left: 8px; color: #e9af87; }
+.hero-stamp { position: absolute; right: 9%; bottom: 56px; width: 105px; height: 105px; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8px; line-height: 1.6; letter-spacing: 1.7px; transform: rotate(9deg); }
+.hero-stamp b { font-size: 24px; font-weight: 400; line-height: 1.2; color: #e9af87; }
+.hero-note { position: absolute; bottom: 27px; left: 7.5%; color: rgba(255,255,255,.72); font-size: 9px; line-height: 1.5; letter-spacing: .6px; }
+
+.section-wrap { width: min(1180px, 85%); margin: auto; }
+.intro { padding-top: 106px; padding-bottom: 82px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 65px; align-items: center; }
+.dark-eyebrow { color: var(--orange); }
+.intro h2, .section-heading h2, .menu-copy h2, .visit-section h2 { font: 500 clamp(38px, 4vw, 53px)/1.12 "Playfair Display", Georgia, serif; letter-spacing: -.8px; margin: 0; }
+.intro h2 em, .section-heading h2 em, .menu-copy h2 em, .visit-section h2 em { color: var(--orange); }
+.intro-description { color: #5f6b62; font-size: 14px; line-height: 1.85; max-width: 440px; padding-top: 21px; }
+.intro-description p { margin-bottom: 19px; }
+.arrow-link { font-size: 12px; font-weight: 700; display: inline-flex; gap: 13px; align-items: center; border-bottom: 1px solid #c9c8bc; padding-bottom: 7px; }
+.arrow-link span { color: var(--orange); font-size: 16px; }
+.intro-facts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 66px; padding-top: 27px; border-top: 1px solid var(--line); }
+.intro-facts > div { display: flex; align-items: center; gap: 13px; color: #606b62; font-size: 11px; line-height: 1.5; }
+.fact-icon { display: grid; place-items: center; width: 39px; height: 39px; border-radius: 50%; background: #eae8dc; color: var(--green); font-size: 18px; }
+
+.offerings { background: #eeece3; padding: 86px 0 95px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 39px; }
+.section-heading .eyebrow { margin-bottom: 17px; }
+.section-heading .arrow-link { margin-bottom: 7px; }
+.offering-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.offering-card { background: var(--paper); min-width: 0; }
+.offering-card > img { display: block; width: 100%; height: 216px; object-fit: cover; }
+.catering-card > img { object-position: center 55%; }
+.venue-card > img { object-position: center 55%; }
+.card-content { padding: 23px 24px 25px; }
+.card-number { color: var(--orange); font-size: 9px; font-weight: 700; letter-spacing: 1.6px; }
+.card-content h3 { margin: 14px 0 11px; font: 500 27px/1.1 "Playfair Display", Georgia, serif; }
+.card-content p { min-height: 66px; margin-bottom: 19px; color: #727970; font-size: 11px; line-height: 1.7; }
+.card-content a { font-size: 11px; font-weight: 700; border-bottom: 1px solid #dedbd1; padding-bottom: 8px; display: flex; justify-content: space-between; }
+.card-content a span { color: var(--orange); font-size: 15px; }
+
+.menu-highlight { display: grid; grid-template-columns: 1fr 1fr; gap: 8.5%; align-items: center; padding-top: 107px; padding-bottom: 110px; }
+.menu-photo { position: relative; }
+.menu-photo img { width: 100%; height: 440px; object-fit: cover; }
+.photo-caption { position: absolute; bottom: 17px; left: 17px; background: var(--paper); padding: 10px 13px; font: italic 12px "Playfair Display", Georgia, serif; }
+.menu-copy .eyebrow { margin-bottom: 18px; }
+.menu-copy h2 { font-size: 43px; }
+.menu-copy > p:not(.eyebrow) { color: #69736a; font-size: 12px; line-height: 1.8; margin: 17px 0 23px; max-width: 460px; }
+.menu-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 19px; padding: 19px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.menu-list span { color: #566158; font-size: 10px; }
+.menu-list span::before { content: "✳"; color: var(--orange); margin-right: 7px; }
+.menu-copy .menu-footnote { margin: 17px 0 20px !important; color: #8a8e84 !important; font-size: 10px !important; }
+.button-dark { background: var(--green); color: white; }
+.button-dark:hover { background: #243a2f; }
+
+.booking-section { background: var(--green); color: white; padding: 92px 0 99px; position: relative; }
+.booking-section::before { content: ""; position: absolute; inset: 0 0 auto; height: 9px; background: repeating-linear-gradient(135deg, #d8875f 0 5px, transparent 5px 13px); opacity: .8; }
+.booking-wrap { width: min(1080px, 83%); margin: auto; display: grid; grid-template-columns: .84fr 1fr; gap: 12%; align-items: start; }
+.booking-copy { padding-top: 19px; }
+.booking-copy .eyebrow { color: #e0a37e; }
+.booking-copy h2 { font-size: clamp(55px, 6vw, 76px); }
+.booking-copy h2 em { color: #e0a37e; }
+.booking-copy > p:not(.eyebrow) { color: rgba(255,255,255,.76); font-size: 12px; line-height: 1.9; margin: 22px 0 27px; max-width: 345px; }
+.booking-contact { border-top: 1px solid rgba(255,255,255,.25); padding-top: 19px; display: flex; align-items: center; gap: 14px; }
+.contact-symbol { width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.36); border-radius: 50%; display: grid; place-items: center; color: #e0a37e; }
+.booking-contact div { display: grid; gap: 4px; }
+.booking-contact small { color: rgba(255,255,255,.65); font-size: 10px; }
+.booking-contact a { font: 500 17px "Playfair Display", Georgia, serif; }
+.booking-copy .booking-hours { color: rgba(255,255,255,.55); font-size: 10px; line-height: 1.8; margin-top: 18px; }
+.booking-form { padding: 32px 35px 27px; background: var(--paper); color: var(--ink); box-shadow: 0 13px 44px rgba(0,0,0,.14); }
+.form-heading { display: flex; justify-content: space-between; padding-bottom: 19px; margin-bottom: 18px; border-bottom: 1px solid var(--line); color: var(--green); font-size: 9px; font-weight: 700; letter-spacing: 1.4px; }
+.form-step { color: #a4a59a; }
+.booking-form label { display: block; margin: 13px 0 7px; font-size: 10px; font-weight: 700; }
+.booking-form input, .booking-form select, .booking-form textarea { width: 100%; min-height: 42px; border: 1px solid #deded5; border-radius: 2px; background: #fff; padding: 10px 11px; color: var(--ink); font-size: 11px; outline: none; }
+.booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus { border-color: #708879; box-shadow: 0 0 0 2px rgba(48,76,62,.1); }
+.booking-form input::placeholder, .booking-form textarea::placeholder { color: #a4a89f; }
+.booking-form textarea { resize: vertical; min-height: 70px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.form-row > div { min-width: 0; }
+.optional { color: #999e95; font-weight: 400; }
+.submit-button { width: 100%; margin-top: 18px; justify-content: space-between; min-height: 48px; }
+.form-disclaimer { margin: 11px 0 0; color: #8a8e84; font-size: 9px; line-height: 1.6; }
+.form-message { margin: 9px 0 0; color: var(--green); font-size: 10px; }
+
+.visit-section { padding-top: 87px; padding-bottom: 88px; display: grid; grid-template-columns: 1.2fr 1fr .8fr; align-items: center; gap: 40px; }
+.visit-section .eyebrow { margin-bottom: 18px; }
+.visit-section h2 { font-size: 43px; }
+.visit-address p { color: #59665c; font-size: 12px; line-height: 1.8; }
+.visit-hours { display: grid; gap: 7px; border-left: 1px solid var(--line); padding-left: 27px; font-size: 11px; color: #536157; }
+.visit-hours b { color: var(--orange); font-size: 9px; letter-spacing: 1.4px; margin-bottom: 4px; }
+.visit-hours small { color: #92958b; font-size: 10px; }
+.site-footer { min-height: 84px; border-top: 1px solid var(--line); padding: 16px 7.2%; display: flex; justify-content: space-between; align-items: center; color: #778078; font-size: 10px; }
+.footer-brand { color: var(--ink); font-size: 16px; }
+.footer-brand img { width: 42px; height: 42px; }
+.footer-brand small { font-size: 8px; }
+.site-footer > a:last-child { color: var(--green); font-weight: 700; }
+
+@media (max-width: 900px) {
+  .site-header { padding: 0 5%; height: 74px; }
+  .menu-toggle { display: block; cursor: pointer; }
+  .main-nav { display: none; position: absolute; top: 74px; left: 0; right: 0; padding: 18px 5% 23px; background: var(--cream); box-shadow: 0 12px 18px rgba(0,0,0,.08); align-items: stretch; gap: 0; flex-direction: column; }
+  .main-nav.is-open { display: flex; }
+  .main-nav > a { padding: 13px 0; }
+  .main-nav .nav-book { padding: 13px 16px; text-align: center; margin-top: 6px; }
+  .hero { height: 600px; min-height: 540px; }
+  .hero-content { width: 86%; }
+  .hero-stamp { right: 7%; bottom: 47px; width: 85px; height: 85px; }
+  .intro { padding-top: 78px; padding-bottom: 65px; column-gap: 35px; }
+  .intro-facts { margin-top: 49px; }
+  .section-wrap { width: 88%; }
+  .offerings { padding: 70px 0; }
+  .offering-grid { gap: 12px; }
+  .offering-card > img { height: 170px; }
+  .card-content { padding: 19px 17px 20px; }
+  .card-content h3 { font-size: 23px; }
+  .card-content p { font-size: 10px; min-height: 82px; }
+  .menu-highlight { gap: 6%; padding-top: 75px; padding-bottom: 75px; }
+  .menu-photo img { height: 390px; }
+  .menu-copy h2 { font-size: 35px; }
+  .menu-list { gap: 11px 8px; }
+  .menu-list span { font-size: 9px; }
+  .booking-wrap { width: 88%; gap: 6%; }
+  .booking-form { padding: 28px 24px 24px; }
+  .visit-section { grid-template-columns: 1fr 1fr; }
+  .visit-hours { grid-column: 2; }
+}
+
+@media (max-width: 620px) {
+  .brand { font-size: 17px; }
+  .brand img { width: 45px; height: 45px; }
+  .hero { height: 630px; min-height: 580px; }
+  .hero-photo { object-position: 58% center; }
+  .hero-overlay { background: linear-gradient(90deg, rgba(20,35,29,.84), rgba(25,41,33,.38)), linear-gradient(0deg, rgba(17,29,25,.35), transparent 40%); }
+  .hero-content { width: 88%; padding-bottom: 48px; }
+  .hero h1 { font-size: clamp(56px, 14vw, 76px); }
+  .hero-copy { font-size: 13px; max-width: 355px; }
+  .hero-stamp { width: 73px; height: 73px; right: 6%; bottom: 55px; font-size: 6px; }
+  .hero-stamp b { font-size: 18px; }
+  .hero-note { left: 6%; bottom: 19px; }
+  .section-wrap { width: 88%; }
+  .intro { grid-template-columns: 1fr; padding-top: 69px; padding-bottom: 61px; }
+  .intro h2, .section-heading h2 { font-size: 43px; }
+  .intro-description { padding-top: 21px; }
+  .intro-facts { grid-template-columns: 1fr; gap: 17px; margin-top: 39px; }
+  .intro-facts > div { font-size: 10px; }
+  .fact-icon { width: 35px; height: 35px; }
+  .offerings { padding: 62px 0; }
+  .section-heading { display: block; }
+  .section-heading .arrow-link { margin-top: 20px; }
+  .offering-grid { grid-template-columns: 1fr; gap: 15px; }
+  .offering-card { display: grid; grid-template-columns: 38% 1fr; min-height: 210px; }
+  .offering-card > img { height: 100%; min-height: 210px; }
+  .card-content { padding: 17px 15px; }
+  .card-content h3 { font-size: 21px; margin: 10px 0 8px; }
+  .card-content p { min-height: 0; font-size: 10px; line-height: 1.55; margin-bottom: 14px; }
+  .card-content a { font-size: 10px; }
+  .menu-highlight { grid-template-columns: 1fr; gap: 31px; padding-top: 67px; padding-bottom: 72px; }
+  .menu-photo img { height: 300px; }
+  .menu-copy h2 { font-size: 39px; }
+  .menu-list { gap: 12px 8px; }
+  .menu-list span { font-size: 9px; line-height: 1.4; }
+  .booking-section { padding: 67px 0 70px; }
+  .booking-wrap { grid-template-columns: 1fr; gap: 36px; width: 88%; }
+  .booking-copy { padding-top: 0; }
+  .booking-copy h2 { font-size: 63px; }
+  .booking-copy > p:not(.eyebrow) { max-width: 420px; }
+  .booking-form { padding: 25px 20px 22px; }
+  .form-row { grid-template-columns: 1fr 1fr; gap: 9px; }
+  .visit-section { grid-template-columns: 1fr; gap: 25px; padding-top: 66px; padding-bottom: 66px; }
+  .visit-section h2 { font-size: 42px; }
+  .visit-hours { grid-column: auto; border-left: 0; border-top: 1px solid var(--line); padding: 19px 0 0; }
+  .site-footer { flex-wrap: wrap; gap: 16px; padding: 19px 6%; }
+  .site-footer > span { order: 3; width: 100%; }
+  .footer-brand { font-size: 14px; }
+}
