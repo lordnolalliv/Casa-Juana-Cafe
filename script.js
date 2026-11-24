@@ -16,6 +16,98 @@ mainNav.querySelectorAll("a").forEach((link) => {
   });
 });
 
+const carousel = document.querySelector(".hero-carousel");
+const carouselSlides = Array.from(document.querySelectorAll(".hero-photo"));
+const carouselDots = Array.from(document.querySelectorAll(".carousel-dot"));
+const carouselToggle = document.querySelector("[data-carousel-toggle]");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+if (carousel && carouselSlides.length > 1 && carouselToggle) {
+  let activeSlide = 0;
+  let timer;
+  let userPaused = reducedMotion.matches;
+  let pointerInside = false;
+  let focusInside = false;
+
+  function updateCarousel() {
+    carouselSlides.forEach((slide, index) => {
+      const isActive = index === activeSlide;
+      slide.classList.toggle("is-active", isActive);
+      slide.setAttribute("aria-hidden", String(!isActive));
+    });
+
+    carouselDots.forEach((dot, index) => {
+      const isActive = index === activeSlide;
+      dot.classList.toggle("is-active", isActive);
+      dot.setAttribute("aria-pressed", String(isActive));
+    });
+  }
+
+  function showSlide(index) {
+    activeSlide = (index + carouselSlides.length) % carouselSlides.length;
+    updateCarousel();
+  }
+
+  function updateAutoplay() {
+    window.clearInterval(timer);
+    if (!userPaused && !pointerInside && !focusInside && !document.hidden) {
+      timer = window.setInterval(() => showSlide(activeSlide + 1), 6000);
+    }
+
+    carouselToggle.textContent = userPaused ? "▶" : "Ⅱ";
+    carouselToggle.setAttribute("aria-label", userPaused ? "Play slideshow" : "Pause slideshow");
+    carouselToggle.setAttribute("aria-pressed", String(userPaused));
+  }
+
+  document.querySelector("[data-carousel-prev]").addEventListener("click", () => {
+    showSlide(activeSlide - 1);
+    updateAutoplay();
+  });
+  document.querySelector("[data-carousel-next]").addEventListener("click", () => {
+    showSlide(activeSlide + 1);
+    updateAutoplay();
+  });
+  carouselDots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      showSlide(index);
+      updateAutoplay();
+    });
+  });
+  carouselToggle.addEventListener("click", () => {
+    userPaused = !userPaused;
+    updateAutoplay();
+  });
+  carousel.addEventListener("pointerenter", () => {
+    pointerInside = true;
+    updateAutoplay();
+  });
+  carousel.addEventListener("pointerleave", () => {
+    pointerInside = false;
+    updateAutoplay();
+  });
+  carousel.addEventListener("focusin", () => {
+    focusInside = true;
+    updateAutoplay();
+  });
+  carousel.addEventListener("focusout", (event) => {
+    if (!carousel.contains(event.relatedTarget)) {
+      focusInside = false;
+      updateAutoplay();
+    }
+  });
+  document.addEventListener("visibilitychange", updateAutoplay);
+  if (typeof reducedMotion.addEventListener === "function") {
+    reducedMotion.addEventListener("change", (event) => {
+      if (event.matches) {
+        userPaused = true;
+        updateAutoplay();
+      }
+    });
+  }
+
+  updateAutoplay();
+}
+
 const bookingDate = document.querySelector("#booking-date");
 const bookingTime = document.querySelector("#booking-time");
 const bookingType = document.querySelector("#booking-type");
