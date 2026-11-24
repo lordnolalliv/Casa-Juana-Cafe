@@ -27,7 +27,8 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
   assert.equal(setup.status, 0, setup.stderr);
   const server = spawn("php", ["-d", `session.save_path="${temporary.replace(/\\/g, '/')}"`, "-S", `127.0.0.1:${port}`, "-t", "backend/public", "backend/public/router.php"], {
     cwd: path.resolve(__dirname, "../.."),
-    env: { ...process.env, CASA_DB_PATH: dbPath, CASA_ADMIN_TOKEN: token },
+    env: { ...process.env, CASA_DB_PATH: dbPath, CASA_ADMIN_TOKEN: token,
+      CASA_MAIL_MODE: "preview", CASA_MAIL_FROM: "noreply@example.test", CASA_OWNER_EMAIL: "owner@example.test" },
     windowsHide: true, stdio: ["ignore", "pipe", "pipe"]
   });
   let output = "";
@@ -98,6 +99,7 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
     assert.match(id, /^[a-f0-9]{32}$/);
     assert.equal(result.status, "pending");
     assert.equal(result.duplicate, false);
+    assert.equal(result.emails_queued, 2);
     assert.ok((await fs.stat(dbPath)).size > 0);
   });
   await t.test("deduplicates simultaneous retries and limits changed requests", async () => {
@@ -107,6 +109,7 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
       const result = await response.json();
       assert.equal(result.id, id);
       assert.equal(result.duplicate, true);
+      assert.equal(result.emails_queued, 0);
     }
     assert.equal((await send({ ...valid, notes: "Changed" })).status, 429);
   });
@@ -119,7 +122,10 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
     assert.equal((await update({ status: "confirmed" }, {})).status, 401);
     assert.equal((await update({ status: "anything" })).status, 422);
     assert.equal((await update({ status: "confirmed" }, admin, "0".repeat(32))).status, 404);
-    assert.equal((await update({ status: "confirmed" })).status, 200);
+    const confirmation = await update({ status: "confirmed" });
+    assert.equal(confirmation.status, 200);
+    assert.equal((await confirmation.json()).emails_queued, 1);
+    assert.equal((await (await update({ status: "confirmed" })).json()).emails_queued, 0);
     const listed = await (await fetch(`${base}/api/bookings`, { headers: admin })).json();
     assert.equal(listed.bookings.length, 1);
     assert.equal(listed.bookings[0].status, "confirmed");
@@ -170,6 +176,7 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
     assert.notEqual(cookie, oldCookie);
     const dashboard = await request("/admin");
     assert.match(dashboard.html, /Welcome, owner/);
+    assert.match(dashboard.html, /Preview only: no emails are sent/);
     assert.match(dashboard.html, /test@example.com/);
     assert.match(dashboard.html, /&lt;script&gt;/);
     assert.doesNotMatch(dashboard.html, /<script>/);

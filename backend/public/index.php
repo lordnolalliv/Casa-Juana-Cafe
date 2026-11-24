@@ -111,12 +111,7 @@ try {
         if (!in_array($status, ['pending', 'confirmed', 'cancelled'], true)) {
             throw new BookingError('Choose pending, confirmed or cancelled.');
         }
-        $query = bookingDatabase()->prepare('UPDATE bookings SET status = ? WHERE id = ?');
-        $query->execute([$status, $matches[1]]);
-        if ($query->rowCount() === 0) {
-            throw new BookingError('Booking not found.', 404);
-        }
-        respond(200, ['id' => $matches[1], 'status' => $status]);
+        respond(200, changeBookingStatus(bookingDatabase(), $matches[1], $status));
     }
     if ($path === '/api/bookings') {
         header('Allow: GET, POST');

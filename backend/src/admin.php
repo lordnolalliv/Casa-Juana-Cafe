@@ -108,6 +108,8 @@ function handleAdmin(string $path, string $method): never
     $filter = '';
     $search = '';
     $notice = '';
+    $emailSummary = [];
+    $emailMode = 'off';
     try {
         startAdminSession();
         $db = adminDatabase();
@@ -134,12 +136,10 @@ function handleAdmin(string $path, string $method): never
                     || !in_array($status, ['pending', 'confirmed', 'cancelled'], true)) {
                     throw new BookingError('Invalid booking or status.');
                 }
-                $query = $db->prepare('UPDATE bookings SET status = ? WHERE id = ?');
-                $query->execute([$status, $id]);
-                if (!$query->rowCount()) {
-                    throw new BookingError('Booking not found.', 404);
-                }
-                $_SESSION['notice'] = 'Booking status updated to ' . $status . '. Contact the customer to let them know.';
+                $result = changeBookingStatus($db, $id, $status);
+                $_SESSION['notice'] = 'Booking status updated to ' . $status . '. '
+                    . ($result['emails_queued'] > 0 ? 'Customer email queued; check the email queue below.'
+                        : ($result['changed'] ? 'No email queued. Contact the customer directly.' : 'Status was unchanged; no additional email queued.'));
                 adminRedirect();
             }
             throw new BookingError('Not found.', 404);
@@ -151,6 +151,8 @@ function handleAdmin(string $path, string $method): never
         $notice = $_SESSION['notice'] ?? '';
         unset($_SESSION['notice']);
         if ($account) {
+            $emailMode = emailConfig()['mode'];
+            $emailSummary = $db->query('SELECT state, COUNT(*) AS total FROM email_outbox GROUP BY state')->fetchAll();
             $filter = is_string($_GET['status'] ?? null) ? $_GET['status'] : '';
             $search = is_string($_GET['q'] ?? null) ? trim($_GET['q']) : '';
             $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1000000]]);
