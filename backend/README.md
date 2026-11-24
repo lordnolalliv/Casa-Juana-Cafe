@@ -26,7 +26,7 @@ Create the owner account once, from the repository root in PowerShell:
 
 The script prompts for a username and a hidden password (12–72 bytes). It stores only a password hash in the private SQLite database. No default credentials are shipped. If you set `CASA_DB_PATH`, use the same value for setup and the PHP server.
 
-Start the PHP server with the command above, then open **http://127.0.0.1:8000/admin**. Sign in to search requests by name, contact or reference; filter by status; read customer details; and save pending, confirmed or cancelled statuses. Results are paginated, 20 per page. Status changes do not send customer notifications.
+Start the PHP server with the command above, then open **http://127.0.0.1:8000/admin**. Sign in to search requests by name, contact or reference; filter by status; read customer details; and save pending, confirmed or cancelled statuses. Results are paginated, 20 per page. When email is configured, status changes queue a customer notification. The dashboard shows the email mode and queue totals.
 
 The dashboard uses a server-side session, CSRF tokens, HttpOnly/SameSite cookies, and a five-attempt login limit per IP per 15 minutes. Sessions expire after 30 minutes of inactivity or eight hours total. Use **Sign out** on shared computers. An API token is not required for the dashboard and is never sent to the browser.
 
@@ -41,6 +41,9 @@ Set real environment variables before starting PHP; `.env` files are **not** aut
 | `CASA_DB_PATH` | Optional SQLite file path; defaults to `backend/storage/bookings.sqlite`. Use an absolute path outside the public directory on persistent disk. |
 | `CASA_ADMIN_TOKEN` | Required for management endpoints; use a randomly generated secret of at least 32 characters. Public submissions work without it. |
 | `CASA_SECURE_COOKIES` | Set to `1` on production HTTPS hosting, especially behind TLS termination, so the dashboard cookie is only sent over HTTPS. Omit for local HTTP development. |
+| `CASA_MAIL_MODE` | `off` (default), `preview` (database previews only), or `mail` (send through the host's PHP `mail()` transport). |
+| `CASA_MAIL_FROM` | Valid sender email address authorized by your hosting/mail provider. Required in preview and mail modes. |
+| `CASA_OWNER_EMAIL` | Cafe notification recipient and reply-to address. Required in preview and mail modes. |
 
 Example in PowerShell (generate and retain the token privately):
 
@@ -50,6 +53,45 @@ php -S 127.0.0.1:8000 -t backend/public backend/public/router.php
 ```
 
 Never put the admin token in frontend JavaScript, Git, or URLs. Restart the server after changing its environment.
+
+## Email notifications
+
+When enabled, a new booking queues an owner alert and a customer acknowledgement if the customer supplied an email. Pending receipts explicitly say the booking is not confirmed. Status changes through either the dashboard or API queue customer updates for confirmed, cancelled, or pending status. Phone-only customers need a call/message; only the owner alert is queued for their new requests.
+
+Repeated submissions and saving an unchanged status do not add duplicate emails. Booking changes and email records commit together. Configuration errors reject the operation without a partial save; delivery failures happen later in the worker and cannot undo a saved booking. `emails_queued` in create/update API responses means queued, not delivered. Email is off by default and enabling it does not backfill old bookings.
+
+### Local preview without sending
+
+In the terminal that starts the PHP server:
+
+```powershell
+$env:CASA_MAIL_MODE = 'preview'
+$env:CASA_MAIL_FROM = 'bookings@example.com'
+$env:CASA_OWNER_EMAIL = 'owner@example.com'
+php -S 127.0.0.1:8000 -t backend/public backend/public/router.php
+```
+
+Submit a test booking or change its status. In another terminal with the same mail environment variables (and `CASA_DB_PATH` if customized), run:
+
+```powershell
+php backend/bin/preview-emails.php
+php backend/bin/send-emails.php
+```
+
+The preview command displays the latest 20 preview messages from the private database. These contain customer details; do not paste real previews into public issues or logs. The worker marks preview records `previewed` without calling a mail transport. Preview records are permanently bound to preview mode and will never send when you enable live mail later.
+
+### Live delivery
+
+1. Configure your PHP host's mail transfer service so PHP `mail()` can send from your authorized sender address. This implementation uses the host's transport; it does not implement authenticated SMTP directly. A typical unconfigured local Windows PHP installation will not send email.
+2. Set `CASA_MAIL_MODE=mail`, `CASA_MAIL_FROM`, and `CASA_OWNER_EMAIL` in both the web application and scheduled worker environments. Use your real sender and cafe inbox. Restart the web server after changing its environment.
+3. Schedule `php /absolute/path/to/backend/bin/send-emails.php` every minute using your host's scheduler, cron, or Windows Task Scheduler. Use the same private database path and a service account with database access. The scheduler must receive the environment variables explicitly; it will not inherit variables from an unrelated terminal.
+4. Submit an authorized test request and verify receipt in the cafe/customer inboxes. This repository's automated tests do not send live email.
+
+Each worker run processes at most 20 messages. The dashboard reports `pending`, `processing`, `accepted`, `failed`, and `previewed` totals. `accepted` means the transport accepted a message; inbox delivery, spam filtering and bounces are not tracked. Phone-only customers still require manual follow-up.
+
+Failed sends retry with a delay, up to five attempts. Messages for the same booking and recipient are processed in order. A worker claims a message for 15 minutes so another worker will not concurrently take it; abandoned claims are recoverable. A crash after transport acceptance but before recording it can cause a retry and duplicate delivery. After five attempts, messages remain `failed` for investigation/manual follow-up. Repair mail configuration and inspect the private `email_outbox` table when diagnosing failures; errors shown by the app do not contain provider credentials.
+
+Queued records contain customer information and remain in SQLite alongside bookings. Include them in your backup and retention policy. No scheduler or live mail service is installed automatically.
 
 ## API
 
@@ -120,6 +162,7 @@ From the repository root (Node.js 18+ and PHP on PATH):
 
 ```sh
 node --test test/booking-proxy.test.js backend/tests/bookings.test.js
+php backend/tests/email.test.php
 ```
 
 The PHP integration tests launch an isolated local server, temporary database and session directory. They exercise persistence, validation, access control, duplicate handling, rate limits, private-path protection, dashboard login/logout, session rotation, CSRF checks, search, status changes and HTML escaping without sending email or contacting external services.
@@ -130,6 +173,9 @@ The PHP integration tests launch an isolated local server, temporary database an
 - `src/admin.php`: session authentication, login throttling and dashboard actions.
 - `templates/admin.php` and `public/admin.css`: responsive staff interface.
 - `bin/setup-admin.ps1` and `bin/create-admin.php`: private owner account setup/reset.
+- `src/email.php`: transactional email queue, message templates, shared status updates and worker delivery.
+- `bin/send-emails.php` and `bin/preview-emails.php`: queue worker and private preview inspection.
+- `tests/email.test.php`: isolated in-memory tests of queueing, retries, ordering and delivery failures using fake transports; no real emails are sent.
 - `tests/bookings.test.js`: HTTP integration tests.
 
-Email, SMS, payments and automatic availability checks are not implemented. Staff can review requests through the dashboard or management API and must contact customers separately. A saved request is not a reservation confirmation.
+SMS, payments and automatic availability checks are not implemented. Staff can review requests through the dashboard or management API. Customers need manual follow-up when email is disabled, fails, or only a phone number is supplied. A saved request is not a reservation confirmation.

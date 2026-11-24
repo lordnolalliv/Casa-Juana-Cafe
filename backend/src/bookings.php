@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/email.php';
 
 final class BookingError extends RuntimeException
 {
@@ -76,6 +77,7 @@ function bookingDatabase(?string $path = null): PDO
         request_hash TEXT NOT NULL, ip_hash TEXT NOT NULL)");
     $db->exec('CREATE INDEX IF NOT EXISTS bookings_contact_created ON bookings(contact_key, created_at)');
     $db->exec('CREATE INDEX IF NOT EXISTS bookings_ip_created ON bookings(ip_hash, created_at)');
+    createEmailSchema($db);
     return $db;
 }
 
@@ -91,7 +93,7 @@ function saveBooking(PDO $db, array $booking, string $ip, ?int $now = null): arr
         $query->execute([$booking['contactKey'], $hash, $now - 600]);
         if ($existing = $query->fetch()) {
             $db->exec('COMMIT');
-            return $existing + ['duplicate' => true];
+            return $existing + ['duplicate' => true, 'emails_queued' => 0];
         }
         $query = $db->prepare('SELECT COUNT(*) FROM bookings WHERE contact_key = ? AND created_at > ?');
         $query->execute([$booking['contactKey'], $now - 30]);
@@ -110,8 +112,9 @@ function saveBooking(PDO $db, array $booking, string $ip, ?int $now = null): arr
         $query->execute([$id, $now, $booking['bookingType'], $booking['date'], $booking['time'],
             $booking['guests'], $booking['occasion'], $booking['name'], $booking['contact'],
             $booking['notes'], $booking['contactKey'], $hash, $ipHash]);
+        $queued = queueBookingEmails($db, $booking + ['id' => $id, 'status' => 'pending', 'booking_type' => $booking['bookingType']], 'created');
         $db->exec('COMMIT');
-        return ['id' => $id, 'status' => 'pending', 'duplicate' => false];
+        return ['id' => $id, 'status' => 'pending', 'duplicate' => false, 'emails_queued' => $queued];
     } catch (Throwable $error) {
         $db->exec('ROLLBACK');
         throw $error;

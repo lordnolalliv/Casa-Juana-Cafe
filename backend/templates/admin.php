@@ -53,6 +53,9 @@
     <span>Page <?= $page ?> of <?= max(1, (int) ceil($total / 20)) ?></span>
     <?php if ($page * 20 < $total): ?><a href="/admin?<?= escapeAdmin(http_build_query(['q' => $search, 'status' => $filter, 'page' => $page + 1])) ?>">Next</a><?php endif; ?>
   </nav></section>
-  <p class="muted small">Status changes are saved here. Customer notifications must be sent separately.</p>
+  <section class="card" aria-label="Email queue"><h2>Email notifications</h2>
+  <p>Mode: <strong><?= escapeAdmin($emailMode) ?></strong>. <?= $emailMode === 'off' ? 'Email is disabled. Contact customers directly.' : ($emailMode === 'preview' ? 'Preview only: no emails are sent.' : 'The scheduled email worker sends queued messages. Accepted means the mail server accepted the email, not that it reached the inbox.') ?></p>
+  <?php foreach ($emailSummary as $emailState): ?><p><?= escapeAdmin(ucfirst($emailState['state'])) ?>: <?= (int) $emailState['total'] ?></p><?php endforeach; ?>
+  <p class="muted small">Phone-only customers must be contacted directly. If messages remain pending or fail, ask the site owner to check the worker and mail configuration.</p></section>
 <?php endif; ?>
 </main></body></html>
