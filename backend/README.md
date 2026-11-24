@@ -16,6 +16,22 @@ Open **http://127.0.0.1:8000** and submit the booking form. The first valid requ
 
 The PHP entry point injects the API endpoint into the form. Opening `index.html` directly or using the existing static deployment still uses WhatsApp. The existing Node/Google Apps Script integration is retained separately. Data is not synchronized between SQLite and Google Sheets.
 
+## Staff dashboard
+
+Create the owner account once, from the repository root in PowerShell:
+
+```powershell
+./backend/bin/setup-admin.ps1
+```
+
+The script prompts for a username and a hidden password (12–72 bytes). It stores only a password hash in the private SQLite database. No default credentials are shipped. If you set `CASA_DB_PATH`, use the same value for setup and the PHP server.
+
+Start the PHP server with the command above, then open **http://127.0.0.1:8000/admin**. Sign in to search requests by name, contact or reference; filter by status; read customer details; and save pending, confirmed or cancelled statuses. Results are paginated, 20 per page. Status changes do not send customer notifications.
+
+The dashboard uses a server-side session, CSRF tokens, HttpOnly/SameSite cookies, and a five-attempt login limit per IP per 15 minutes. Sessions expire after 30 minutes of inactivity or eight hours total. Use **Sign out** on shared computers. An API token is not required for the dashboard and is never sent to the browser.
+
+To reset the password or replace the single owner account, run the setup script again. This invalidates existing dashboard sessions. For non-Windows setup, `php backend/bin/create-admin.php` accepts a JSON object containing `username` and `password` on standard input; supply it through a private prompt or secret manager, not command-line arguments or a committed file.
+
 ## Configuration
 
 Set real environment variables before starting PHP; `.env` files are **not** automatically loaded.
@@ -24,6 +40,7 @@ Set real environment variables before starting PHP; `.env` files are **not** aut
 | --- | --- |
 | `CASA_DB_PATH` | Optional SQLite file path; defaults to `backend/storage/bookings.sqlite`. Use an absolute path outside the public directory on persistent disk. |
 | `CASA_ADMIN_TOKEN` | Required for management endpoints; use a randomly generated secret of at least 32 characters. Public submissions work without it. |
+| `CASA_SECURE_COOKIES` | Set to `1` on production HTTPS hosting, especially behind TLS termination, so the dashboard cookie is only sent over HTTPS. Omit for local HTTP development. |
 
 Example in PowerShell (generate and retain the token privately):
 
@@ -80,7 +97,7 @@ Invoke-RestMethod http://127.0.0.1:8000/api/bookings -Headers $headers
 Invoke-RestMethod "http://127.0.0.1:8000/api/bookings/<id>" -Method Patch -Headers $headers -ContentType 'application/json' -Body '{"status":"confirmed"}'
 ```
 
-There is no public endpoint for reading customer records. The management API is intended for trusted operators; there is no admin dashboard yet.
+There is no public endpoint for reading customer records. The management API is intended for trusted integrations. Staff can use the session-authenticated `/admin` dashboard instead.
 
 ## Deployment
 
@@ -91,6 +108,7 @@ Use a PHP-capable host with persistent disk. The current Vercel Node/static setu
 - Other servers: route requests to `backend/public/index.php`; do not expose repository files directly.
 - Keep the repository's root HTML/CSS/JS/logo files available to PHP, which serves only that explicit public asset list.
 - Give PHP write access to the private database directory. Configure HTTPS, `display_errors=Off`, and private server error logging.
+- Configure a private, writable PHP session directory and `CASA_SECURE_COOKIES=1` in production. Run owner setup on the production database. Do not share passwords or session files.
 - Put the database on persistent local storage, back it up, and set a retention policy for customer records. This SQLite setup is intended for one application host.
 - Behind a reverse proxy, rate limiting uses `REMOTE_ADDR`. Configure the server to supply a trusted client address; the app deliberately does not trust arbitrary forwarding headers.
 
@@ -104,11 +122,14 @@ From the repository root (Node.js 18+ and PHP on PATH):
 node --test test/booking-proxy.test.js backend/tests/bookings.test.js
 ```
 
-The PHP integration tests launch an isolated local server and temporary database. They exercise persistence, validation, access control, duplicate handling, rate limits, and private-path protection without sending email or contacting external services.
+The PHP integration tests launch an isolated local server, temporary database and session directory. They exercise persistence, validation, access control, duplicate handling, rate limits, private-path protection, dashboard login/logout, session rotation, CSRF checks, search, status changes and HTML escaping without sending email or contacting external services.
 
 - `src/bookings.php`: validation, schema initialization, and transactional persistence.
 - `public/index.php`: public assets, routing, JSON responses, and management authorization.
 - `public/router.php`: local development routing.
+- `src/admin.php`: session authentication, login throttling and dashboard actions.
+- `templates/admin.php` and `public/admin.css`: responsive staff interface.
+- `bin/setup-admin.ps1` and `bin/create-admin.php`: private owner account setup/reset.
 - `tests/bookings.test.js`: HTTP integration tests.
 
-Email, SMS, payments, automatic availability checks, and an admin dashboard are not implemented. Staff must review requests through the management API and contact customers separately. A saved request is not a reservation confirmation.
+Email, SMS, payments and automatic availability checks are not implemented. Staff can review requests through the dashboard or management API and must contact customers separately. A saved request is not a reservation confirmation.

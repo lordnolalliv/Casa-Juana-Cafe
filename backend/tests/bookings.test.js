@@ -2,7 +2,7 @@
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { spawn } = require("node:child_process");
+const { spawn, spawnSync } = require("node:child_process");
 const { once } = require("node:events");
 const fs = require("node:fs/promises");
 const os = require("node:os");
@@ -19,7 +19,13 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
   const port = listener.address().port;
   await new Promise((resolve) => listener.close(resolve));
   const token = randomBytes(32).toString("hex");
-  const server = spawn("php", ["-S", `127.0.0.1:${port}`, "-t", "backend/public", "backend/public/router.php"], {
+  const password = randomBytes(24).toString("hex");
+  const setup = spawnSync("php", ["backend/bin/create-admin.php"], {
+    cwd: path.resolve(__dirname, "../.."), env: { ...process.env, CASA_DB_PATH: dbPath },
+    input: JSON.stringify({ username: "owner", password }), encoding: "utf8", windowsHide: true
+  });
+  assert.equal(setup.status, 0, setup.stderr);
+  const server = spawn("php", ["-d", `session.save_path="${temporary.replace(/\\/g, '/')}"`, "-S", `127.0.0.1:${port}`, "-t", "backend/public", "backend/public/router.php"], {
     cwd: path.resolve(__dirname, "../.."),
     env: { ...process.env, CASA_DB_PATH: dbPath, CASA_ADMIN_TOKEN: token },
     windowsHide: true, stdio: ["ignore", "pipe", "pipe"]
@@ -35,8 +41,8 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
       server.kill();
       await closed;
     }
-    for (const file of [dbPath, `${dbPath}-journal`, `${dbPath}-wal`, `${dbPath}-shm`]) {
-      await fs.unlink(file).catch((error) => { if (error.code !== "ENOENT") throw error; });
+    for (const file of await fs.readdir(temporary)) {
+      await fs.unlink(path.join(temporary, file));
     }
     await fs.rmdir(temporary);
   });
@@ -55,7 +61,7 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
   while (date.getUTCDay() !== 1) date.setUTCDate(date.getUTCDate() + 1);
   const valid = { bookingType: "Table reservation", date: date.toISOString().slice(0, 10),
     time: "12:00", guests: "1–2", occasion: "Birthday", name: "Test Customer",
-    contact: "test@example.com", notes: "Test only", consent: "yes", website: "" };
+    contact: "test@example.com", notes: '<script>alert("test")</script>', consent: "yes", website: "" };
   const admin = { Authorization: `Bearer ${token}` };
   const send = (body, extra = {}) => fetch(`${base}/api/bookings`, {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), ...extra
@@ -129,5 +135,65 @@ test("PHP booking API", { timeout: 30000 }, async (t) => {
     const response = await send({ ...valid, contact: "blocked@example.com" });
     assert.equal(response.status, 429);
     assert.equal(response.headers.get("retry-after"), "600");
+  });
+
+  await t.test("dashboard login, CSRF, search, updates, session rotation and logout", async () => {
+    let cookie;
+    let csrf;
+    const request = async (url, body) => {
+      const response = await fetch(base + url, {
+        method: body ? "POST" : "GET", redirect: "manual",
+        headers: { ...(cookie ? { Cookie: cookie } : {}), ...(body ? { "Content-Type": "application/x-www-form-urlencoded" } : {}) },
+        body: body ? new URLSearchParams(body) : undefined
+      });
+      const setCookie = response.headers.get("set-cookie");
+      if (setCookie) cookie = setCookie.split(";")[0];
+      const html = await response.text();
+      csrf = html.match(/name="csrf" value="([a-f0-9]+)"/)?.[1] || csrf;
+      return { response, html, setCookie };
+    };
+    const initial = await request("/admin");
+    assert.equal(initial.response.status, 200);
+    assert.match(initial.html, /Sign in to review/);
+    assert.doesNotMatch(initial.html, /test@example.com/);
+    assert.match(initial.setCookie, /HttpOnly/i);
+    assert.match(initial.setCookie, /SameSite=Strict/i);
+    assert.match(initial.setCookie, /path=\/admin/i);
+    assert.match(initial.response.headers.get("cache-control"), /no-store/);
+    assert.match(csrf, /^[a-f0-9]{64}$/);
+    const unauthorized = await request("/admin/status", { csrf, id, status: "cancelled" });
+    assert.equal(unauthorized.response.status, 401, output);
+    assert.equal((await request("/admin/login", { username: "owner", password })).response.status, 403);
+    assert.equal((await request("/admin/login", { csrf, username: "owner", password: "incorrect-password" })).response.status, 401);
+    const oldCookie = cookie;
+    assert.equal((await request("/admin/login", { csrf, username: "owner", password })).response.status, 303);
+    assert.notEqual(cookie, oldCookie);
+    const dashboard = await request("/admin");
+    assert.match(dashboard.html, /Welcome, owner/);
+    assert.match(dashboard.html, /test@example.com/);
+    assert.match(dashboard.html, /&lt;script&gt;/);
+    assert.doesNotMatch(dashboard.html, /<script>/);
+    assert.ok(!dashboard.html.includes(token));
+    assert.ok(!dashboard.html.includes(password));
+    assert.match((await request("/admin?q=nomatch")).html, /No requests found/);
+    assert.match((await request("/admin?q=test%40example.com")).html, /Requests <span>\(1\)/);
+    assert.equal((await request("/admin/status", { csrf: "wrong", id, status: "cancelled" })).response.status, 403);
+    assert.equal((await request("/admin/status", { csrf, id, status: "invalid" })).response.status, 422);
+    assert.equal((await request("/admin/status", { csrf, id, status: "cancelled" })).response.status, 303);
+    assert.match((await request("/admin?status=cancelled")).html, /Booking status updated to cancelled/);
+    const records = await (await fetch(`${base}/api/bookings`, { headers: admin })).json();
+    assert.equal(records.bookings.find((row) => row.id === id).status, "cancelled");
+    assert.equal((await fetch(`${base}/api/bookings`, { headers: { Cookie: cookie } })).status, 401);
+    const signedInCookie = cookie;
+    assert.equal((await request("/admin/logout", { csrf: "wrong" })).response.status, 403);
+    assert.equal((await request("/admin/logout", { csrf })).response.status, 303);
+    cookie = signedInCookie;
+    assert.match((await request("/admin")).html, /Sign in to review/);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      assert.equal((await request("/admin/login", { csrf, username: "owner", password: "incorrect-password" })).response.status, 401);
+    }
+    const blocked = await request("/admin/login", { csrf, username: "owner", password });
+    assert.equal(blocked.response.status, 429);
+    assert.equal(blocked.response.headers.get("retry-after"), "900");
   });
 });
