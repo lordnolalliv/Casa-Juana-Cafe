@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require dirname(__DIR__) . '/src/bookings.php';
+require dirname(__DIR__) . '/src/admin.php';
 
 function respond(int $status, array $body): never
 {
@@ -53,6 +54,15 @@ function readBody(): array
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 $root = dirname(__DIR__, 2);
+if ($path === '/admin' || str_starts_with($path, '/admin/')) {
+    handleAdmin($path, $method);
+}
+if ($path === '/admin.css' && in_array($method, ['GET', 'HEAD'], true)) {
+    header('Content-Type: text/css; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    if ($method === 'GET') readfile(__DIR__ . '/admin.css');
+    exit;
+}
 // Only these public assets can be served. Source, secrets and the database stay private.
 $assets = ['/script.js' => 'application/javascript', '/styles.css' => 'text/css',
     '/casa-juana-logo.png' => 'image/png'];
