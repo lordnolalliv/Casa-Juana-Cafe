@@ -157,6 +157,7 @@ const bookingDisclaimer = document.querySelector("#booking-disclaimer");
 const consentCopy = bookingForm.querySelector(".consent-row span");
 const BOOKING_ENDPOINT = "";
 const PHP_BOOKING_ENDPOINT = bookingForm.dataset.bookingEndpoint || "";
+const BUSINESS_EMAIL = "lordvillalon@gmail.com";
 const localToday = new Date();
 const dateOffset = localToday.getTimezoneOffset() * 60000;
 bookingDate.min = new Date(localToday.getTime() - dateOffset).toISOString().slice(0, 10);
@@ -282,7 +283,8 @@ bookingForm.addEventListener("submit", async (event) => {
   const date = new Date(`${booking.get("date")}T12:00:00`);
   const formattedDate = new Intl.DateTimeFormat("en-PH", { dateStyle: "full" }).format(date);
   const message = [
-    "Hello Casa Juana Cafe! I'd like to make a booking inquiry.",
+    "Hello Casa Juana Cafe,",
+    "I'd like to make a booking inquiry.",
     "",
     `Booking: ${booking.get("bookingType")}`,
     `Preferred date: ${formattedDate}`,
@@ -294,7 +296,12 @@ bookingForm.addEventListener("submit", async (event) => {
     booking.get("notes") ? `Details: ${booking.get("notes")}` : ""
   ].filter(Boolean).join("\n");
 
-  const whatsappUrl = `https://wa.me/639603850662?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  bookingMessage.textContent = "Your booking details are ready in WhatsApp. Send the message to request confirmation.";
+  const gmailUrl = new URL("https://mail.google.com/mail/");
+  gmailUrl.searchParams.set("view", "cm");
+  gmailUrl.searchParams.set("fs", "1");
+  gmailUrl.searchParams.set("to", BUSINESS_EMAIL);
+  gmailUrl.searchParams.set("su", `Casa Juana booking inquiry: ${booking.get("bookingType")}`);
+  gmailUrl.searchParams.set("body", message);
+  window.open(gmailUrl.toString(), "_blank", "noopener,noreferrer");
+  bookingMessage.textContent = `Your inquiry is ready in Gmail. Press Send to contact the cafe at ${BUSINESS_EMAIL}. Your booking is not confirmed until the cafe replies.`;
 });

@@ -8,7 +8,7 @@ When enabled, the website submits bookings to the Vercel function in `api/bookin
 - Emails new requests and the sheet link to `lordvillalon@gmail.com`.
 - Sends an acknowledgement email when the customer provides an email address. Phone-only requests are saved and sent to the cafe without an SMS/WhatsApp auto-reply.
 - Marks requests as pending; the cafe must still confirm availability and pricing.
-- Keeps the current WhatsApp flow as a fallback until the endpoint is configured.
+- Keeps the current Gmail compose flow as a fallback until the endpoint is configured.
 
 ## Deploy the Apps Script handler
 
@@ -26,7 +26,7 @@ In Vercel, open the project settings and add an environment variable:
 - **Value:** the deployed Apps Script Web app URL ending in `/exec`
 - **Environment:** Production (and Preview if you want to test preview deployments)
 
-After the Apps Script deployment is live and `APPS_SCRIPT_URL` is set in Vercel, set `BOOKING_ENDPOINT` in `script.js` to `"/api/bookings"` and redeploy. The Apps Script URL stays on the server and is not included in the browser code. Until both steps are complete, leave `BOOKING_ENDPOINT` blank so the form continues to use WhatsApp.
+After the Apps Script deployment is live and `APPS_SCRIPT_URL` is set in Vercel, set `BOOKING_ENDPOINT` in `script.js` to `"/api/bookings"` and redeploy. The Apps Script URL stays on the server and is not included in the browser code. Until both steps are complete, leave `BOOKING_ENDPOINT` blank so the form opens a prepared Gmail inquiry.
 
 The prepared booking sheet remains private to its Google account unless its owner shares it. The Apps Script handler includes a hidden spam field and short per-contact rate limiting; if the public endpoint is abused, redeploy the Apps Script Web app to rotate its URL.
 

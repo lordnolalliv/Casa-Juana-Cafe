@@ -14,7 +14,7 @@ php -S 127.0.0.1:8000 -t backend/public backend/public/router.php
 
 Open **http://127.0.0.1:8000** and submit the booking form. The first valid request creates `backend/storage/bookings.sqlite`. Keep this database private and back it up; it contains customer information.
 
-The PHP entry point injects the API endpoint into the form. Opening `index.html` directly or using the existing static deployment still uses WhatsApp. The existing Node/Google Apps Script integration is retained separately. Data is not synchronized between SQLite and Google Sheets.
+The PHP entry point injects the API endpoint into the form. Opening `index.html` directly or using the existing static deployment opens a prepared Gmail inquiry. The existing Node/Google Apps Script integration is retained separately. Data is not synchronized between SQLite and Google Sheets.
 
 ## Staff dashboard
 
