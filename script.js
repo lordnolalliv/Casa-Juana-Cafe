@@ -20,7 +20,25 @@ const carousel = document.querySelector(".hero-carousel");
 const carouselSlides = Array.from(document.querySelectorAll(".hero-photo"));
 const carouselDots = Array.from(document.querySelectorAll(".carousel-dot"));
 const carouselToggle = document.querySelector("[data-carousel-toggle]");
+const heroCaption = document.querySelector("#hero-caption");
+const heroHeading = document.querySelector("#hero-heading");
+const heroCopy = document.querySelector("#hero-copy");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+const heroCaptions = [
+  {
+    heading: "Good food.<br><em>Good company.</em>",
+    copy: "A little taste of home, made for sharing. Join us for a cafe meal, celebrate with your people, or let us bring the feast to you."
+  },
+  {
+    heading: "Gather 'round.<br><em>Celebrate together.</em>",
+    copy: "From party trays to generous buffet spreads, make room for your favorite people and a table worth gathering around."
+  },
+  {
+    heading: "Make room for<br><em>a little getaway.</em>",
+    copy: "Spend the day poolside, enjoy a pickleball game, or settle in for an overnight stay in Alburquerque, Bohol."
+  }
+];
 
 if (carousel && carouselSlides.length > 1 && carouselToggle) {
   let activeSlide = 0;
@@ -28,6 +46,20 @@ if (carousel && carouselSlides.length > 1 && carouselToggle) {
   let userPaused = reducedMotion.matches;
   let pointerInside = false;
   let focusInside = false;
+  let captionTimer;
+
+  function updateHeroCaption() {
+    const caption = heroCaptions[activeSlide];
+    if (!caption || !heroCaption || !heroHeading || !heroCopy) return;
+
+    window.clearTimeout(captionTimer);
+    heroCaption.classList.add("is-changing");
+    captionTimer = window.setTimeout(() => {
+      heroHeading.innerHTML = caption.heading;
+      heroCopy.textContent = caption.copy;
+      window.requestAnimationFrame(() => heroCaption.classList.remove("is-changing"));
+    }, reducedMotion.matches ? 0 : 180);
+  }
 
   function updateCarousel() {
     carouselSlides.forEach((slide, index) => {
@@ -41,6 +73,8 @@ if (carousel && carouselSlides.length > 1 && carouselToggle) {
       dot.classList.toggle("is-active", isActive);
       dot.setAttribute("aria-pressed", String(isActive));
     });
+
+    updateHeroCaption();
   }
 
   function showSlide(index) {

@@ -31,6 +31,8 @@ button, input, select, textarea { font: inherit; }
 .hero-photo.is-active { z-index: 1; filter: saturate(.86) blur(0); opacity: 1; transform: scale(1); }
 .hero-overlay { position: absolute; z-index: 1; inset: 0; background: linear-gradient(90deg, rgba(20,35,29,.84) 0%, rgba(25,41,33,.62) 43%, rgba(26,38,31,.08) 100%), linear-gradient(0deg, rgba(17,29,25,.35), transparent 40%); pointer-events: none; }
 .hero-content { position: relative; z-index: 2; width: min(1180px, 85%); height: 100%; margin: auto; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 20px 0 35px; }
+.hero-caption { transition: opacity .32s ease, transform .32s ease; }
+.hero-caption.is-changing { opacity: 0; transform: translateY(9px); }
 .eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2.3px; margin: 0 0 22px; }
 .eyebrow span { display: inline-block; vertical-align: middle; width: 25px; height: 1px; background: var(--orange); margin-right: 8px; }
 h1, h2, h3, p { margin-top: 0; }
@@ -276,5 +278,5 @@ h1 em, h2 em { font-weight: 500; color: #d9a681; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-photo, .hero-photo.is-active, .carousel-arrow, .carousel-toggle, .carousel-dot { transition: none; animation: none; }
+  .hero-photo, .hero-photo.is-active, .hero-caption, .carousel-arrow, .carousel-toggle, .carousel-dot { transition: none; animation: none; }
 }
