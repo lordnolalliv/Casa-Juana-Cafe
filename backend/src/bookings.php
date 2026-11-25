@@ -28,7 +28,7 @@ function validateBooking(array $input, ?DateTimeImmutable $now = null): array
         throw new BookingError('Please complete the form and agree to be contacted.');
     }
     if (!in_array($booking['bookingType'], ['Table reservation', 'Catering or packed meals',
-        'Private event or venue', 'Pool day-use', 'Overnight stay'], true)
+        'Private event or venue', 'Pickleball court booking', 'Pool day-use', 'Overnight stay'], true)
         || !in_array($booking['guests'], ['1–2', '3–5', '6–10', '11–20', '21–50', '51–100', 'More than 100'], true)) {
         throw new BookingError('Choose a valid booking type and guest count.');
     }

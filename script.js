@@ -111,6 +111,10 @@ if (carousel && carouselSlides.length > 1 && carouselToggle) {
 const bookingDate = document.querySelector("#booking-date");
 const bookingTime = document.querySelector("#booking-time");
 const bookingType = document.querySelector("#booking-type");
+const bookingGuidance = document.querySelector("#booking-guidance");
+const bookingDateLabel = document.querySelector("#booking-date-label");
+const bookingTimeLabel = document.querySelector("#booking-time-label");
+const guestCountLabel = document.querySelector("#guest-count-label");
 const customerContact = document.querySelector("#customer-contact");
 const bookingForm = document.querySelector("#booking-form");
 const bookingMessage = document.querySelector("#form-message");
@@ -142,6 +146,21 @@ if (PHP_BOOKING_ENDPOINT) {
 
 function updateBookingConstraints() {
   const isCafeTable = bookingType.value === "Table reservation";
+  const bookingCopy = {
+    "Table reservation": ["Preferred date", "Preferred time", "Number of guests", "For a cafe table, choose a Monday to Saturday date and a time between 8:00 AM and 5:00 PM."],
+    "Catering or packed meals": ["Event or delivery date", "Preferred delivery time", "How many people should we prepare for?", "Tell us the date, preferred delivery time, and approximate number of servings."],
+    "Private event or venue": ["Preferred event date", "Preferred start time", "Expected number of guests", "Share your preferred event date and start time. Add package or setup questions in the notes."],
+    "Pickleball court booking": ["Preferred court date", "Preferred start time", "Number of players", "Tell us your preferred date and start time, and how many players are in your group. Add session length or equipment questions in the notes."],
+    "Pool day-use": ["Preferred visit date", "Preferred arrival time", "Number of guests", "Let us know your preferred visit date and group size. The cafe will confirm availability and details."],
+    "Overnight stay": ["Preferred check-in date", "Approximate arrival time", "Number of guests", "Share your check-in date and approximate arrival time. Add the number of nights in the notes."]
+  };
+  const details = bookingCopy[bookingType.value];
+  if (details) {
+    bookingDateLabel.textContent = details[0];
+    bookingTimeLabel.textContent = details[1];
+    guestCountLabel.textContent = details[2];
+    bookingGuidance.textContent = details[3] + " Your request is only confirmed when the cafe replies.";
+  }
   bookingTime.min = isCafeTable ? "08:00" : "";
   bookingTime.max = isCafeTable ? "17:00" : "";
 
@@ -164,6 +183,7 @@ function updateBookingConstraints() {
 bookingType.addEventListener("change", updateBookingConstraints);
 bookingDate.addEventListener("input", updateBookingConstraints);
 bookingTime.addEventListener("input", updateBookingConstraints);
+updateBookingConstraints();
 
 function validateContact() {
   const value = customerContact.value.trim();

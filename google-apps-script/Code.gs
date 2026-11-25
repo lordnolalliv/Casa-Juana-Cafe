@@ -5,6 +5,7 @@ var BOOKING_TYPES = [
   "Table reservation",
   "Catering or packed meals",
   "Private event or venue",
+  "Pickleball court booking",
   "Pool day-use",
   "Overnight stay"
 ];

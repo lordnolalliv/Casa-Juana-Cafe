@@ -8,16 +8,16 @@
   <title>Book a Table or Event | Casa Juana Cafe</title>
   <meta property="og:type" content="website">
   <meta property="og:title" content="Casa Juana Cafe | Good food. Good company.">
-  <meta property="og:description" content="Filipino comfort food, catering, private events, pool days, and overnight stays in Alburquerque, Bohol.">
+  <meta property="og:description" content="Filipino comfort food, catering, private events, pickleball, pool days, and overnight stays in Alburquerque, Bohol.">
   <meta property="og:image" content="https://raw.githubusercontent.com/lordnolalliv/Casa-Juana-Cafe/main/casa-juana-logo.png">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Casa Juana Cafe | Good food. Good company.">
-  <meta name="twitter:description" content="Filipino comfort food, catering, private events, pool days, and overnight stays in Alburquerque, Bohol.">
+  <meta name="twitter:description" content="Filipino comfort food, catering, private events, pickleball, pool days, and overnight stays in Alburquerque, Bohol.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/lordnolalliv/Casa-Juana-Cafe/main/casa-juana-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -65,6 +65,7 @@
       <a href="#experience">The experience</a>
       <a href="#menu">Our food</a>
       <a href="#venue">Venue & stays</a>
+      <a href="#faq">FAQ</a>
       <a class="nav-book" href="#booking">Make a booking <span>↗</span></a>
     </nav>
   </header>
@@ -111,9 +112,9 @@
         <a class="arrow-link" href="#booking">Let's make a plan <span>↗</span></a>
       </div>
       <div class="intro-facts">
-        <div><span class="fact-icon">⌂</span><span>Locally loved<br>in Alburquerque</span></div>
-        <div><span class="fact-icon">✳</span><span>Food, events<br>& overnight stays</span></div>
-        <div><span class="fact-icon">♡</span><span>Made for sharing<br>with your people</span></div>
+        <div><span class="fact-icon"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="m5 14 11-9 11 9M8 12v14h16V12M13 26v-8h6v8"></path><path class="icon-detail" d="M4 27c2-1 3-2 4-4M28 27c-2-1-3-2-4-4M11 11h10"></path><circle class="icon-dot" cx="16" cy="13" r="1"></circle></svg></span><span>Locally loved<br>in Alburquerque</span></div>
+        <div><span class="fact-icon"><svg aria-hidden="true" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8.5"></circle><circle class="icon-detail" cx="16" cy="16" r="5.5"></circle><path d="M16 2.5v3M16 26.5v3M2.5 16h3M26.5 16h3M6.45 6.45l2.12 2.12M23.43 23.43l2.12 2.12M25.55 6.45l-2.12 2.12M8.57 23.43l-2.12 2.12"></path><path class="icon-accent" d="M16 12v4l2.7 1.8"></path><circle class="icon-dot" cx="16" cy="16" r="1"></circle></svg></span><span>Food, events<br>& overnight stays</span></div>
+        <div><span class="fact-icon"><svg aria-hidden="true" viewBox="0 0 32 32"><path d="M26 11.7c0 6.4-10 13.2-10 13.2S6 18.1 6 11.7A5.6 5.6 0 0 1 16 8.5a5.6 5.6 0 0 1 10 3.2Z"></path><path class="icon-detail" d="M10 12c0-1.7 1.2-2.8 2.7-2.8M22 12c0-1.7-1.2-2.8-2.7-2.8M16 13v5"></path><path class="icon-accent" d="m13.7 17.5 2.3 2.2 2.3-2.2"></path><circle class="icon-dot" cx="16" cy="6" r=".8"></circle></svg></span><span>Made for sharing<br>with your people</span></div>
       </div>
     </section>
 
@@ -137,7 +138,7 @@
           </article>
           <article class="offering-card venue-card" id="venue">
             <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=900&q=85" alt="A peaceful private swimming pool">
-            <div class="card-content"><span class="card-number">03 / EVENTS & STAYS</span><h3>Your own little<br>getaway.</h3><p>Celebrate, take a dip, sing a song, or stay the night. Ask us about private events, pool days, and overnight packages.</p><a href="#booking">Explore the venue <span>↗</span></a></div>
+            <div class="card-content"><span class="card-number">03 / EVENTS & STAYS</span><h3>Your own little<br>getaway.</h3><p>Play pickleball, celebrate, take a dip, or stay the night. Ask us about court bookings, private events, pool days, and overnight packages.</p><a href="#booking">Explore the venue <span>↗</span></a></div>
           </article>
         </div>
       </div>
@@ -176,21 +177,23 @@
           <p class="booking-hours">Cafe hours: Monday–Saturday, 8:00 AM–5:00 PM<br>For event and overnight inquiries, message us anytime.</p>
         </div>
         <form class="booking-form" id="booking-form">
-          <div class="form-heading"><span>YOUR BOOKING REQUEST</span><span class="form-step">01 — 02</span></div>
+          <div class="form-heading"><span>YOUR BOOKING INQUIRY</span><span class="form-step">WHATSAPP</span></div>
           <label for="booking-type">What are you planning?</label>
           <select id="booking-type" name="bookingType" required>
             <option value="" selected disabled>Choose an experience</option>
             <option>Table reservation</option>
             <option>Catering or packed meals</option>
             <option>Private event or venue</option>
+            <option>Pickleball court booking</option>
             <option>Pool day-use</option>
             <option>Overnight stay</option>
           </select>
+          <p class="booking-guidance" id="booking-guidance" aria-live="polite">Choose an experience and we’ll tailor the details below. Your request is only confirmed when the cafe replies.</p>
           <div class="form-row">
-            <div><label for="booking-date">Preferred date</label><input id="booking-date" name="date" type="date" required></div>
-            <div><label for="booking-time">Preferred time</label><input id="booking-time" name="time" type="time" required></div>
+            <div><label id="booking-date-label" for="booking-date">Preferred date</label><input id="booking-date" name="date" type="date" required></div>
+            <div><label id="booking-time-label" for="booking-time">Preferred time</label><input id="booking-time" name="time" type="time" required></div>
           </div>
-          <label for="guest-count">Number of guests</label>
+          <label id="guest-count-label" for="guest-count">Number of guests</label>
           <select id="guest-count" name="guests" required><option value="" selected disabled>Select guests</option><option>1–2</option><option>3–5</option><option>6–10</option><option>11–20</option><option>21–50</option><option>51–100</option><option>More than 100</option></select>
           <label for="booking-occasion">What's the occasion? <span class="optional">(optional)</span></label>
           <select id="booking-occasion" name="occasion">
@@ -217,10 +220,37 @@
             <input name="consent" type="checkbox" value="yes" required>
             <span>I agree Casa Juana may use my details to respond to this request. My request is not confirmed until the cafe replies.</span>
           </label>
-          <button class="button button-dark submit-button" type="submit">Continue to WhatsApp <span>↗</span></button>
-          <p class="form-disclaimer" id="booking-disclaimer">WhatsApp opens with your request details. They are sent only after you press Send in WhatsApp.</p>
+          <button class="button button-dark submit-button" type="submit">Review request in WhatsApp <span>↗</span></button>
+          <p class="form-disclaimer" id="booking-disclaimer">This sends nothing yet. WhatsApp opens with your message; press Send there to contact the cafe. Your booking is not confirmed until the cafe replies.</p>
           <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
         </form>
+      </div>
+    </section>
+
+    <section class="faq-section section-wrap" id="faq" aria-labelledby="faq-heading">
+      <div class="faq-intro">
+        <p class="eyebrow dark-eyebrow">GOOD TO KNOW</p>
+        <h2 id="faq-heading">A few things<br><em>you may be wondering.</em></h2>
+        <p>Need help with something else? Call or message us and we’ll be happy to help.</p>
+        <a class="arrow-link" href="tel:+639603850662">Call +63 960 385 0662 <span>â†—</span></a>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Is my booking confirmed when I submit the form?<span aria-hidden="true"></span></summary>
+          <p>No. The form opens a prepared WhatsApp message. After you press Send, the cafe will reply to confirm availability, options, and pricing.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What can I ask Casa Juana about?<span aria-hidden="true"></span></summary>
+          <p>You can inquire about cafe table reservations, catering and packed meals, private events, pickleball court bookings, pool day-use, and overnight stays.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Where can I see the menu and prices?<span aria-hidden="true"></span></summary>
+          <p>Menu choices and prices can vary by order. Send an inquiry through WhatsApp or Facebook for current options and a quote.</p>
+        </details>
+        <details class="faq-item">
+          <summary>When is the cafe open?<span aria-hidden="true"></span></summary>
+          <p>The cafe is open Monday to Saturday, 8:00 AM to 5:00 PM. For event and overnight inquiries, you can message the cafe anytime.</p>
+        </details>
       </div>
     </section>
 
